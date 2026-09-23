@@ -30,6 +30,8 @@ class StatistiquesService
 
         $reference ??= new \DateTimeImmutable();
 
+        // Ramène au début de la journée : la période compte des jours entiers,
+        // quelle que soit l'heure à laquelle les statistiques sont demandées.
         return $reference->modify(sprintf('-%d days', $jours))->setTime(0, 0);
     }
 
@@ -45,6 +47,8 @@ class StatistiquesService
                 ->field('titre')->first('$titre')
                 ->field('categorie')->first('$categorie')
                 ->field('nombre')->sum(1)
+            // En cas d'égalité, le titre puis l'identifiant départagent :
+            // l'ordre est toujours le même d'un appel à l'autre.
             ->sort(['nombre' => 'desc', 'titre' => 'asc', '_id' => 'asc'])
             ->limit($limite);
 

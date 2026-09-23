@@ -4,6 +4,12 @@ namespace App\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Attribute as ODM;
 
+/**
+ * La consultation est écrite une fois et jamais modifiée.
+ * Le titre et la catégorie sont dupliqués depuis MySQL : les statistiques
+ * restent lisibles même si la ressource est renommée ou supprimée.
+ */
+
 #[ODM\Document(collection: 'consultations')]
 #[ODM\Index(keys: ['dateConsultation' => 'desc'])]
 class Consultation

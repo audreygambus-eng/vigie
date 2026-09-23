@@ -30,6 +30,8 @@ class StatistiquesServiceIntegrationTest extends KernelTestCase
     {
         $consultation = $this->service->enregistrerConsultation(12, 'Doctrine ODM', 'Bases de données');
 
+        // Vide la mémoire de Doctrine : find() doit relire MongoDB. Sinon, il renverrait
+        // l'objet encore en mémoire, et le test passerait même si rien n'avait été écrit en base.
         $this->documentManager->clear();
         $relue = $this->documentManager->find(Consultation::class, $consultation->getId());
 
