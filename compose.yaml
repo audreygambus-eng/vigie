@@ -6,3 +6,18 @@ services:
     volumes:
       - .:/app
     command: php -S 0.0.0.0:8000 -t public
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DB: vigie
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:8.0
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27019:27017"
+
+volumes:
+  mongo_data:
