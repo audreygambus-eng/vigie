@@ -22,6 +22,17 @@ class StatistiquesService
         return $consultation;
     }
 
+        public function debutPeriode(int $jours, ?\DateTimeImmutable $reference = null): \DateTimeImmutable
+    {
+        if ($jours < 1) {
+            throw new \InvalidArgumentException('La période doit compter au moins un jour.');
+        }
+
+        $reference ??= new \DateTimeImmutable();
+
+        return $reference->modify(sprintf('-%d days', $jours))->setTime(0, 0);
+    }
+
         public function topRessources(\DateTimeImmutable $depuis, int $limite = 10): array
     {
         $builder = $this->documentManager->createAggregationBuilder(Consultation::class);
