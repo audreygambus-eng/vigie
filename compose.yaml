@@ -9,15 +9,30 @@ services:
     environment:
       MONGODB_URI: mongodb://mongodb:27017
       MONGODB_DB: vigie
+      DATABASE_URL: mysql://vigie:vigie@database:3306/vigie?serverVersion=8.0&charset=utf8mb4
     depends_on:
       - mongodb
+      - database
 
   mongodb:
     image: mongo:8.0
     volumes:
       - mongo_data:/data/db
     ports:
-      - "27019:27017"
+      - "127.0.0.1:27019:27017"
+
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: vigie
+      MYSQL_USER: vigie
+      MYSQL_PASSWORD: vigie
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3308:3306"
 
 volumes:
   mongo_data:
+  mysql_data:
