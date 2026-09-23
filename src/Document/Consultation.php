@@ -5,6 +5,7 @@ namespace App\Document;
 use Doctrine\ODM\MongoDB\Mapping\Attribute as ODM;
 
 #[ODM\Document(collection: 'consultations')]
+#[ODM\Index(keys: ['dateConsultation' => 'desc'])]
 class Consultation
 {
     #[ODM\Id]
