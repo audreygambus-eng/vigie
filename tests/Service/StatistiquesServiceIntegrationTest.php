@@ -38,4 +38,27 @@ class StatistiquesServiceIntegrationTest extends KernelTestCase
         $this->assertSame('Doctrine ODM', $relue->getTitre());
         $this->assertSame('Bases de données', $relue->getCategorie());
     }
+
+    public function testTopRessourcesClasseParNombreEtIgnoreLesConsultationsAnciennes(): void
+    {
+        $this->consulter(1, 'Doctrine ODM', '2026-09-20', 2);
+        $this->consulter(2, 'Docker Compose', '2026-09-21', 3);
+        $this->consulter(3, 'PHPUnit', '2026-09-22', 1);
+        $this->consulter(3, 'PHPUnit', '2026-08-01', 5);
+        $this->documentManager->flush();
+
+        $top = $this->service->topRessources(new \DateTimeImmutable('2026-09-16'));
+
+        $this->assertSame([2, 1, 3], array_column($top, '_id'));
+        $this->assertSame([3, 2, 1], array_column($top, 'nombre'));
+    }
+
+    private function consulter(int $ressourceId, string $titre, string $date, int $fois): void
+    {
+        for ($i = 0; $i < $fois; $i++) {
+            $this->documentManager->persist(
+                new Consultation($ressourceId, $titre, 'Symfony & PHP', new \DateTimeImmutable($date))
+            );
+        }
+    }
 }
