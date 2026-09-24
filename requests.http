@@ -3,8 +3,8 @@ POST http://localhost:8000/api/ressources
 Content-Type: application/json
 
 {
-    "titre": "Documentation MongoDB",
-    "url": "https://www.mongodb.com/docs/",
+    "titre": "",
+    "url": "htps://docs.phpunit.de/",
     "categorieId": 1
 }
 
@@ -13,7 +13,10 @@ PUT http://localhost:8000/api/ressources/1
 Content-Type: application/json
 
 {
-    "titre": "Documentation officielle de Symfony",
-    "url": "https://symfony.com/doc/current/index.html",
+    "titre": "Documentation de référence officielle de Symfony",
+    "url": "https://www.php.net/manual/fr/",
     "categorieId": 1
 }
+
+### Supprimer une ressource
+DELETE http://localhost:8000/api/ressources/12

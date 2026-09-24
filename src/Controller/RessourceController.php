@@ -14,10 +14,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/ressources', format: 'json')]
 class RessourceController extends AbstractController
 {
+    public function __construct(
+        private readonly ValidatorInterface $validator,
+    ) {
+    }
+
     #[Route('', name: 'ressource_liste', methods: ['GET'])]
     public function liste(
         RessourceRepository $ressourceRepository,
@@ -46,6 +53,7 @@ class RessourceController extends AbstractController
             ->setUrl($input->url)
             ->setCategorie($categorie);
 
+        $this->valider($ressource);
         $entityManager->persist($ressource);
         $entityManager->flush();
 
@@ -67,9 +75,20 @@ class RessourceController extends AbstractController
             ->setTitre($input->titre)
             ->setUrl($input->url)
             ->setCategorie($this->trouverCategorie($input->categorieId, $entityManager));
+        
+        $this->valider($ressource);
         $entityManager->flush();
 
         return $this->json($ressource, context: ['groups' => 'ressource:lecture']);
+    }
+
+    #[Route('/{id}', name: 'ressource_suppression', methods: ['DELETE'], requirements: ['id' => '\d+'])]
+    public function suppression(Ressource $ressource, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($ressource);
+        $entityManager->flush();
+
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     private function trouverCategorie(int $id, EntityManagerInterface $entityManager): Categorie
@@ -80,6 +99,17 @@ class RessourceController extends AbstractController
         }
 
         return $categorie;
+    }
+
+    private function valider(Ressource $ressource): void
+    {
+        $violations = $this->validator->validate($ressource);
+        if (count($violations) > 0) {
+            throw new UnprocessableEntityHttpException(
+                'Données invalides.',
+                new ValidationFailedException($ressource, $violations),
+            );
+        }
     }
     
 }

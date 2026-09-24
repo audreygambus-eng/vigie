@@ -18,8 +18,8 @@ class Categorie
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(message: 'Le libellé est obligatoire.')]
+    #[Assert\Length(max: 50, maxMessage: 'Le libellé ne doit pas dépasser {{ limit }} caractères.')]
     #[Groups(['ressource:lecture'])]
     private ?string $libelle = null;
 

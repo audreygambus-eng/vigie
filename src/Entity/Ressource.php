@@ -7,8 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Attribute\Groups;
 use App\Repository\RessourceRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
+#[UniqueEntity('url', message: 'Cette ressource est déjà enregistrée.')]
 class Ressource
 {
     #[ORM\Id]
@@ -18,15 +20,15 @@ class Ressource
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le titre ne doit pas dépasser {{ limit }} caractères.')]
     #[Groups(['ressource:lecture'])]
     private ?string $titre = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Url(requireTld: true)]
-    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'L\'URL est obligatoire.')]
+    #[Assert\Url(requireTld: true, message: 'Cette URL n\'est pas valide.')]
+    #[Assert\Length(max: 255, maxMessage: 'L\'URL ne doit pas dépasser {{ limit }} caractères.')]
     #[Groups(['ressource:lecture'])]
     private ?string $url = null;
 
@@ -36,7 +38,7 @@ class Ressource
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    #[Assert\NotNull]
+    #[Assert\NotNull(message: 'La catégorie est obligatoire.')]
     #[Groups(['ressource:lecture'])]
     private ?Categorie $categorie = null;
 
