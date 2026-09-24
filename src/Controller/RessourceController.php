@@ -39,10 +39,7 @@ class RessourceController extends AbstractController
         #[MapRequestPayload] RessourceInput $input,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        $categorie = $entityManager->find(Categorie::class, $input->categorieId);
-        if ($categorie === null) {
-            throw new UnprocessableEntityHttpException('Catégorie inconnue.');
-        }
+        $categorie = $this->trouverCategorie($input->categorieId, $entityManager);
 
         $ressource = (new Ressource())
             ->setTitre($input->titre)
@@ -59,4 +56,30 @@ class RessourceController extends AbstractController
             ['groups' => 'ressource:lecture'],
         );
     }
+
+    #[Route('/{id}', name: 'ressource_modification', methods: ['PUT'], requirements: ['id' => '\d+'])]
+    public function modification(
+        Ressource $ressource,
+        #[MapRequestPayload] RessourceInput $input,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $ressource
+            ->setTitre($input->titre)
+            ->setUrl($input->url)
+            ->setCategorie($this->trouverCategorie($input->categorieId, $entityManager));
+        $entityManager->flush();
+
+        return $this->json($ressource, context: ['groups' => 'ressource:lecture']);
+    }
+
+    private function trouverCategorie(int $id, EntityManagerInterface $entityManager): Categorie
+    {
+        $categorie = $entityManager->find(Categorie::class, $id);
+        if ($categorie === null) {
+            throw new UnprocessableEntityHttpException('Catégorie inconnue.');
+        }
+
+        return $categorie;
+    }
+    
 }

@@ -7,3 +7,13 @@ Content-Type: application/json
     "url": "https://www.mongodb.com/docs/",
     "categorieId": 1
 }
+
+### Modifier une ressource
+PUT http://localhost:8000/api/ressources/1
+Content-Type: application/json
+
+{
+    "titre": "Documentation officielle de Symfony",
+    "url": "https://symfony.com/doc/current/index.html",
+    "categorieId": 1
+}

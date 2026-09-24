@@ -5,5 +5,7 @@ RUN apt-get update && apt-get install -y git unzip libssl-dev \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-install pdo_mysql
 
+RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/securite.ini
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
