@@ -1,0 +1,9 @@
+### Créer une ressource
+POST http://localhost:8000/api/ressources
+Content-Type: application/json
+
+{
+    "titre": "Documentation MongoDB",
+    "url": "https://www.mongodb.com/docs/",
+    "categorieId": 1
+}
