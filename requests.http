@@ -1,16 +1,18 @@
 ### Créer une ressource
 POST http://localhost:8000/api/ressources
 Content-Type: application/json
+Authorization: Basic admin:{{motdepasseAdmin}}
 
 {
-    "titre": "",
-    "url": "htps://docs.phpunit.de/",
-    "categorieId": 1
+    "titre": "Documentation MongoDB",
+    "url": "https://www.mongodb.com/docs/",
+    "categorieId": 2
 }
 
 ### Modifier une ressource
 PUT http://localhost:8000/api/ressources/1
 Content-Type: application/json
+Authorization: Basic admin:{{motdepasseAdmin}}
 
 {
     "titre": "Documentation de référence officielle de Symfony",
@@ -20,6 +22,7 @@ Content-Type: application/json
 
 ### Supprimer une ressource
 DELETE http://localhost:8000/api/ressources/12
+Authorization: Basic admin:{{motdepasseAdmin}}
 
 ### Top des ressources (30 derniers jours par défaut)
 GET http://localhost:8000/api/statistiques/top
