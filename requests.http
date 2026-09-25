@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Basic admin:{{motdepasseAdmin}}
 
 {
-    "titre": "Documentation MongoDB",
+    "titre": "",
     "url": "https://www.mongodb.com/docs/",
     "categorieId": 2
 }
@@ -35,3 +35,6 @@ GET http://localhost:8000/api/statistiques/top?jours=0
 
 ### Liste des catégories
 GET http://localhost:8000/api/categories
+
+###Ressource inexistante (doit renvoyer une 404)
+GET http://localhost:8000/api/ressources/999
