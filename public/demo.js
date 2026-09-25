@@ -2,6 +2,8 @@ const API = '/api';
 
 async function lireJson(url) {
     const reponse = await fetch(url, { headers: { Accept: 'application/json' } });
+    // fetch ne lève pas d'erreur sur une 404 ou une 500, seulement en cas de coupure réseau :
+    // il faut vérifier le code de réponse soi-même.
     if (!reponse.ok) {
         throw new Error(`Erreur ${reponse.status} sur ${url}`);
     }
@@ -16,6 +18,8 @@ function signalerErreur(erreur) {
     erreurChargement.hidden = false;
 }
 
+// Point d'entrée unique des chargements : intercepte toute erreur et l'affiche dans la page,
+// au lieu d'écrire un try/catch dans chaque écouteur.
 async function executer(action) {
     try {
         await action();
@@ -52,6 +56,9 @@ async function chargerRessources(categorieId = '') {
 
     listeRessources.replaceChildren();
     for (const ressource of ressources) {
+        // Le lien passe par la route de consultation, qui enregistre la visite puis redirige.
+        // nofollow : les robots ne doivent pas fausser les statistiques en suivant ces liens.
+        // noopener : la page ouverte ne peut pas agir sur cet onglet.
         const lien = document.createElement('a');
         lien.href = `/ressources/${ressource.id}/consulter`;
         lien.target = '_blank';
@@ -93,6 +100,7 @@ periode.addEventListener('change', () =>
     executer (chargerTop),
 );
 
+// Au retour sur cet onglet, après une consultation ouverte dans un autre, le top se met à jour.
 window.addEventListener('focus', () =>
     executer (chargerTop),
 );
@@ -107,6 +115,8 @@ function effacerErreurs() {
     message.textContent = '';
 }
 
+// Chaque violation renvoyée par l'API indique le champ en faute (propertyPath) :
+// la zone d'erreur correspondante porte l'identifiant erreur-<champ>.
 function afficherErreurs(erreur) {
     if (!erreur.violations) {
         message.textContent = erreur.detail;
@@ -130,7 +140,9 @@ formulaire.addEventListener('submit', async (evenement) => {
         url: champs.url.value.trim(),
         categorieId: champs.categorieId.value === '' ? null : Number(champs.categorieId.value),
     };
-
+    
+    // Aucun identifiant dans le code : sur une 401, le navigateur demande lui-même
+    // le mot de passe, puis le retient pour la session.
     const reponse = await fetch(`${API}/ressources`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
