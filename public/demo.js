@@ -81,4 +81,55 @@ window.addEventListener('focus', async () => {
     await chargerTop();
 });
 
+const formulaire = document.querySelector('#formulaire-ajout');
+const message = document.querySelector('#message');
+
+function effacerErreurs() {
+    for (const zone of formulaire.querySelectorAll('.erreur')) {
+        zone.textContent = '';
+    }
+    message.textContent = '';
+}
+
+function afficherErreurs(erreur) {
+    if (!erreur.violations) {
+        message.textContent = erreur.detail;
+        return;
+    }
+    for (const violation of erreur.violations) {
+        const zone = document.querySelector(`#erreur-${violation.propertyPath}`);
+        if (zone) {
+            zone.textContent = violation.title;
+        }
+    }
+}
+
+formulaire.addEventListener('submit', async (evenement) => {
+    evenement.preventDefault();
+    effacerErreurs();
+
+    const champs = formulaire.elements;
+    const donnees = {
+        titre: champs.titre.value.trim(),
+        url: champs.url.value.trim(),
+        categorieId: champs.categorieId.value === '' ? null : Number(champs.categorieId.value),
+    };
+
+    const reponse = await fetch(`${API}/ressources`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(donnees),
+    });
+
+    if (reponse.status === 201) {
+        formulaire.reset();
+        message.textContent = 'Ressource ajoutée.';
+        await chargerRessources(document.querySelector('#filtre-categorie').value);
+    } else if (reponse.status === 422) {
+        afficherErreurs(await reponse.json());
+    } else {
+        message.textContent = `L'ajout a échoué (erreur ${reponse.status}).`;
+    }
+});
+
 await Promise.all([chargerCategories(), chargerRessources(), chargerTop()]);
