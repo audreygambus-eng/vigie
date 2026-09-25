@@ -8,6 +8,22 @@ async function lireJson(url) {
     return reponse.json();
 }
 
+const erreurChargement = document.querySelector('#erreur-chargement');
+
+function signalerErreur(erreur) {
+    console.error(erreur);
+    erreurChargement.textContent = "Les données n'ont pas pu être chargées. Vérifiez que l'application est démarrée, puis rechargez la page.";
+    erreurChargement.hidden = false;
+}
+
+async function executer(action) {
+    try {
+        await action();
+    } catch (erreur) {
+        signalerErreur(erreur);
+    }
+}
+
 function ajouterOption(liste, valeur, texte) {
     const option = document.createElement('option');
     option.value = valeur;
@@ -51,9 +67,9 @@ async function chargerRessources(categorieId = '') {
     }
 }
 
-document.querySelector('#filtre-categorie').addEventListener('change', async (evenement) => {
-    await chargerRessources(evenement.target.value);
-});
+document.querySelector('#filtre-categorie').addEventListener('change', (evenement) =>
+    executer(() => chargerRessources(evenement.target.value)),
+);
 
 const listeTop = document.querySelector('#top-ressources');
 const topVide = document.querySelector('#top-vide');
@@ -73,13 +89,13 @@ async function chargerTop() {
     }
 }
 
-periode.addEventListener('change', async () => {
-    await chargerTop();
-});
+periode.addEventListener('change', () => 
+    executer (chargerTop),
+);
 
-window.addEventListener('focus', async () => {
-    await chargerTop();
-});
+window.addEventListener('focus', () =>
+    executer (chargerTop),
+);
 
 const formulaire = document.querySelector('#formulaire-ajout');
 const message = document.querySelector('#message');
@@ -132,4 +148,4 @@ formulaire.addEventListener('submit', async (evenement) => {
     }
 });
 
-await Promise.all([chargerCategories(), chargerRessources(), chargerTop()]);
+await executer(() => Promise.all([chargerCategories(), chargerRessources(), chargerTop()]));
