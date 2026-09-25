@@ -9,7 +9,7 @@ class RessourceControllerTest extends WebTestCase
     public function testCreationSansAuthentificationEstRefusee(): void
     {
         $client = static::createClient();
-
+        // Données valides exprès : seule l'absence d'authentification peut expliquer le refus.
         $client->request(
             'POST',
             '/api/ressources',

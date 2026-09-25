@@ -15,10 +15,13 @@ security:
             security: false
         main:
             lazy: true
+            # API sans session : chaque requête s'authentifie elle-même.
             stateless: true
             provider: utilisateurs_en_memoire
+            # Le mot de passe circule à chaque requête, seulement encodé : HTTPS obligatoire en production.
             http_basic:
                 realm: Vigie
 
+    # Lecture publique, écriture réservée. PATCH est inclus par précaution pour de futures routes.
     access_control:
         - { path: ^/api, methods: [POST, PUT, PATCH, DELETE], roles: ROLE_ADMIN }

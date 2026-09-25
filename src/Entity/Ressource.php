@@ -36,6 +36,9 @@ class Ressource
     #[Groups(['ressource:lecture'])]
     private \DateTimeImmutable $dateAjout;
 
+    // Relation unidirectionnelle : on ne navigue jamais d'une catégorie vers ses ressources
+    // (le filtre par catégorie passe par le repository).
+    // onDelete CASCADE : supprimer une catégorie supprime ses ressources, et c'est MySQL qui s'en charge.
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull(message: 'La catégorie est obligatoire.')]

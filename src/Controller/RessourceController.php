@@ -36,6 +36,8 @@ class RessourceController extends AbstractController
         return $this->json($ressources, context: ['groups' => 'ressource:lecture']);
     }
 
+    // \d+ : l'identifiant doit être numérique, pour ne pas capter d'autres adresses
+    // comme /api/ressources/top.
     #[Route('/{id}', name: 'ressource_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function detail(Ressource $ressource): JsonResponse
     {
@@ -95,12 +97,18 @@ class RessourceController extends AbstractController
     {
         $categorie = $entityManager->find(Categorie::class, $id);
         if ($categorie === null) {
+            // 422 et non 404 : l'adresse appelée existe, ce sont les données envoyées qui sont invalides.
             throw new UnprocessableEntityHttpException('Catégorie inconnue.');
         }
 
         return $categorie;
     }
 
+    /**
+     * Valide l'entité en plus du DTO : UniqueEntity doit interroger la base,
+     * ce que la validation du DTO ne peut pas faire.
+     * L'index unique est la garantie finale si deux requêtes arrivent en même temps.
+     */
     private function valider(Ressource $ressource): void
     {
         $violations = $this->validator->validate($ressource);
