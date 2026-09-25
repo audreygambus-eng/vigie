@@ -14,13 +14,13 @@ class Categorie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['ressource:lecture'])]
+    #[Groups(['ressource:lecture', 'categorie:lecture'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(message: 'Le libellé est obligatoire.')]
     #[Assert\Length(max: 50, maxMessage: 'Le libellé ne doit pas dépasser {{ limit }} caractères.')]
-    #[Groups(['ressource:lecture'])]
+    #[Groups(['ressource:lecture', 'categorie:lecture'])]
     private ?string $libelle = null;
 
         public function getId(): ?int

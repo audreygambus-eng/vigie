@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vigie — démonstration</title>
+    <link rel="stylesheet" href="demo.css">
+    <script type="module" src="demo.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Vigie</h1>
+        <p>Veille technique : ressources et statistiques de consultation</p>
+    </header>
+
+    <main>
+        <section aria-labelledby="titre-ressources">
+            <h2 id="titre-ressources">Ressources</h2>
+            <label for="filtre-categorie">Catégorie</label>
+            <select id="filtre-categorie">
+                <option value="">Toutes</option>
+            </select>
+            <ul id="liste-ressources"></ul>
+        </section>
+
+        <section aria-labelledby="titre-top">
+            <h2 id="titre-top">Les plus consultées</h2>
+            <label for="periode">Période</label>
+            <select id="periode">
+                <option value="7">7 derniers jours</option>
+                <option value="30" selected>30 derniers jours</option>
+            </select>
+            <ol id="top-ressources"></ol>
+        </section>
+
+        <section aria-labelledby="titre-ajout">
+            <h2 id="titre-ajout">Ajouter une ressource</h2>
+            <form id="formulaire-ajout" novalidate>
+                <div>
+                    <label for="titre">Titre</label>
+                    <input id="titre" name="titre" required maxlength="255" aria-describedby="erreur-titre">
+                    <p class="erreur" id="erreur-titre"></p>
+                </div>
+                <div>
+                    <label for="url">URL</label>
+                    <input id="url" name="url" type="url" required maxlength="255" aria-describedby="erreur-url">
+                    <p class="erreur" id="erreur-url"></p>
+                </div>
+                <div>
+                    <label for="categorieId">Catégorie</label>
+                    <select id="categorieId" name="categorieId" required aria-describedby="erreur-categorieId">
+                        <option value="">Choisir une catégorie</option>
+                    </select>
+                    <p class="erreur" id="erreur-categorieId"></p>
+                </div>
+                <button type="submit">Ajouter</button>
+            </form>
+            <output id="message" aria-live="polite"></output>
+        </section>
+    </main>
+</body>
+</html>

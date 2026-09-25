@@ -32,3 +32,6 @@ GET http://localhost:8000/api/statistiques/top?jours=7&limite=5
 
 ### Période invalide (doit renvoyer une 400)
 GET http://localhost:8000/api/statistiques/top?jours=0
+
+### Liste des catégories
+GET http://localhost:8000/api/categories
