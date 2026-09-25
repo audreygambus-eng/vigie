@@ -29,7 +29,7 @@ class Consultation
     #[ODM\Field(type: 'date_immutable')]
     private \DateTimeImmutable $dateConsultation;
 
-        public function __construct(
+    public function __construct(
         int $ressourceId,
         string $titre,
         string $categorie,
@@ -41,7 +41,7 @@ class Consultation
         $this->dateConsultation = $dateConsultation ?? new \DateTimeImmutable();
     }
 
-        public function getId(): ?string
+    public function getId(): ?string
     {
         return $this->id;
     }
