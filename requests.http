@@ -20,3 +20,12 @@ Content-Type: application/json
 
 ### Supprimer une ressource
 DELETE http://localhost:8000/api/ressources/12
+
+### Top des ressources (30 derniers jours par défaut)
+GET http://localhost:8000/api/statistiques/top
+
+### Top sur 7 jours, limité à 5 ressources
+GET http://localhost:8000/api/statistiques/top?jours=7&limite=5
+
+### Période invalide (doit renvoyer une 400)
+GET http://localhost:8000/api/statistiques/top?jours=0
