@@ -1,11 +1,16 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Calculer le préfixe sous lequel le site est installé (par exemple /vigie),
+    # ou une valeur vide si le site est à la racine du domaine.
+    RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+    RewriteRule .* - [E=BASE:%1]
+
     # Transmettre l'en-tête Authorization à PHP (FastCGI), indispensable à HTTP Basic.
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
     # Servir les fichiers existants (demo.html, CSS, JS, images) tels quels,
     # et envoyer toutes les autres requêtes à Symfony.
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [QSA,L]
+    RewriteRule ^ %{ENV:BASE}/index.php [QSA,L]
 </IfModule>

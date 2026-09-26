@@ -1,4 +1,4 @@
-const API = '/api';
+const API = 'api';
 
 async function lireJson(url) {
     const reponse = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -60,7 +60,7 @@ async function chargerRessources(categorieId = '') {
         // nofollow : les robots ne doivent pas fausser les statistiques en suivant ces liens.
         // noopener : la page ouverte ne peut pas agir sur cet onglet.
         const lien = document.createElement('a');
-        lien.href = `/ressources/${ressource.id}/consulter`;
+        lien.href = `ressources/${ressource.id}/consulter`;
         lien.target = '_blank';
         lien.rel = 'nofollow noopener';
         lien.textContent = ressource.titre;
