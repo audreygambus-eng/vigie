@@ -7,7 +7,9 @@
     RewriteRule .* - [E=BASE:%1]
 
     # Transmettre l'en-tête Authorization à PHP (FastCGI), indispensable à HTTP Basic.
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    # seulement s'il contient une valeur, pour ne jamais créer une variable vide.
+    RewriteCond %{HTTP:Authorization} .+
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
 
     # Servir les fichiers existants (demo.html, CSS, JS, images) tels quels,
     # et envoyer toutes les autres requêtes à Symfony.
