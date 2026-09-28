@@ -4,6 +4,8 @@ Application de veille technique : on enregistre des ressources (titre, URL, cat�
 
 Projet réalisé dans le cadre du titre professionnel Développeur Web et Web Mobile.
 
+**Démo en ligne :** https://audrey.alwaysdata.net/vigie/demo.html
+
 ## Pile technique
 
 - Symfony 7.4 (PHP 8.3)
@@ -85,6 +87,63 @@ docker compose exec app php bin/phpunit
 ```
 
 Les tests d'intégration utilisent une base MongoDB séparée, `vigie_test`.
+
+## Déploiement
+
+L'application est déployée sur **AlwaysData** (PHP 8.4, MariaDB 11.4), avec **MongoDB Atlas** pour les statistiques, AlwaysData ne proposant plus de base MongoDB.
+
+### Extension MongoDB
+
+L'extension est compilée à la main sur le serveur, dans la même version qu'en développement : la bibliothèque `mongodb/mongodb` du projet exige une extension de la série 1.21.
+
+```bash
+wget https://pecl.php.net/get/mongodb-1.21.5.tgz
+tar xzf mongodb-1.21.5.tgz && cd mongodb-1.21.5
+phpize && ./configure && make
+```
+
+Le fichier `modules/mongodb.so` est copié hors du dossier de compilation, puis déclaré dans le php.ini du compte (`extension=...`). Il doit être recompilé à chaque changement de version de PHP.
+
+### Installation
+
+```bash
+git clone https://github.com/audreygambus-eng/vigie.git
+cd vigie
+```
+
+Créer un fichier `.env.local`, exclu du dépôt et lisible par son seul propriétaire (`chmod 600`), avec :
+
+- `APP_ENV=prod` et `APP_DEBUG=0`
+- `APP_SECRET`
+- `DATABASE_URL` (avec `serverVersion=11.4.13-MariaDB`)
+- `MONGODB_URI` et `MONGODB_DB`
+- `ADMIN_PASSWORD_HASH`, entre guillemets simples
+
+Puis :
+
+```bash
+composer install --no-dev --optimize-autoloader
+php bin/console security:hash-password
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:mongodb:schema:update
+```
+
+Les fixtures n'étant pas disponibles en production, les catégories sont insérées en SQL.
+
+### Configuration du site
+
+- **Racine du site : le dossier `public/`**, pour que `.env.local`, `vendor/` et `.git/` ne soient jamais accessibles depuis le web.
+- **HTTPS forcé**, indispensable avec HTTP Basic.
+- Le fichier `public/.htaccess` envoie les requêtes à Symfony, calcule le préfixe d'installation (`/vigie`), et transmet l'en-tête `Authorization` à PHP. Cette transmission n'a lieu que si l'en-tête contient une valeur : une variable vide serait lue en priorité par Symfony et bloquerait toute authentification.
+
+### Mise à jour
+
+```bash
+git pull
+composer install --no-dev --optimize-autoloader
+php bin/console doctrine:migrations:migrate
+php bin/console cache:clear
+```
 
 ## Choix techniques
 
